@@ -12,10 +12,19 @@ The benchmark is built from six chronologically ordered Bitcoin blockchain snaps
 
 The framework was designed to address common evaluation issues in blockchain fraud detection, including:
 
-* Temporal leakage
-* Retrospective intelligence aggregation
-* Unrealistic train-test protocols
-* Hidden dependence on historical structural exposure
+Benchmark construction scripts
+Feature-engineering pipeline
+Experimental protocols
+LightGBM evaluation scripts
+Temporal horizon analysis
+Bootstrap confidence intervals
+SHAP explainability analysis
+Structural exposure analysis
+Metadata and feature definitions
+
+A small sample dataset is provided for demonstration purposes.
+
+The complete benchmark dataset will be released upon publication.
 
 ## Main Contributions
 
