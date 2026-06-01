@@ -1,0 +1,69 @@
+{
+  "dataset": "/content/drive/MyDrive/bitcoin_snapshots_project/data/processed_v21_final/dataset_v21_learning.csv",
+  "model": {
+    "type": "CatBoost",
+    "configuration": "best_ablation_without_fee_dynamics",
+    "iterations": 700,
+    "learning_rate": 0.025,
+    "depth": 6,
+    "l2_leaf_reg": 5.0
+  },
+  "features": [
+    "input_count",
+    "output_count",
+    "input_addr_count",
+    "coinbase_flag",
+    "has_witness",
+    "script_type_encoded",
+    "input_addr_concentration",
+    "io_count_ratio",
+    "tx_weight",
+    "avg_input_value",
+    "total_input_scaled",
+    "log_output_value",
+    "fee_ratio",
+    "prev_addr_seen_ratio",
+    "prev_addr_seen_count"
+  ],
+  "temporal_protocol": {
+    "train": [
+      "D1",
+      "D2",
+      "D3"
+    ],
+    "validation": [
+      "D4"
+    ],
+    "test": [
+      "D5",
+      "D6"
+    ]
+  },
+  "metrics": {
+    "auc_pr": 0.7332792621277812,
+    "auc_roc": 0.9790489818923582,
+    "f1": 0.7393462262536369,
+    "precision": 0.7466297960594539,
+    "recall": 0.7322033898305085,
+    "brier": 0.026639304366276723,
+    "threshold": 0.9507533985077975,
+    "tp": 4320,
+    "fp": 1466,
+    "tn": 642125,
+    "fn": 1580,
+    "val_f1": 0.30404068945979956,
+    "n_train": 794859,
+    "n_val": 242722,
+    "n_test": 649491,
+    "train_positive_rate": 0.0050763720357950275,
+    "val_positive_rate": 0.007230494145565709,
+    "test_positive_rate": 0.009084036576334392
+  },
+  "outputs": {
+    "metrics": "/content/drive/MyDrive/bitcoin_snapshots_project/results/bootstrap_precision_at_k/best_model_metrics.csv",
+    "bootstrap_ci": "/content/drive/MyDrive/bitcoin_snapshots_project/results/bootstrap_precision_at_k/bootstrap_confidence_intervals.csv",
+    "precision_recall_at_k": "/content/drive/MyDrive/bitcoin_snapshots_project/results/bootstrap_precision_at_k/precision_recall_at_k.csv",
+    "top_percent_capture": "/content/drive/MyDrive/bitcoin_snapshots_project/results/bootstrap_precision_at_k/top_percent_capture.csv",
+    "ranked_alerts": "/content/drive/MyDrive/bitcoin_snapshots_project/results/bootstrap_precision_at_k/ranked_test_alerts.csv"
+  }
+}

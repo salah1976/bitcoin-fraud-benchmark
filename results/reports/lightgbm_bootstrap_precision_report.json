@@ -1,0 +1,72 @@
+{
+  "dataset": "/content/drive/MyDrive/bitcoin_snapshots_project/data/processed_v21_final/dataset_v21_learning.csv",
+  "model": {
+    "type": "LightGBM",
+    "configuration": "final_15_features_with_memory",
+    "n_estimators": 700,
+    "learning_rate": 0.025,
+    "num_leaves": 64,
+    "scale_pos_weight": 195.9910780669145
+  },
+  "features": [
+    "input_count",
+    "output_count",
+    "input_addr_count",
+    "coinbase_flag",
+    "has_witness",
+    "script_type_encoded",
+    "input_addr_concentration",
+    "io_count_ratio",
+    "tx_weight",
+    "avg_input_value",
+    "total_input_scaled",
+    "log_output_value",
+    "fee_ratio",
+    "prev_addr_seen_ratio",
+    "prev_addr_seen_count"
+  ],
+  "temporal_protocol": {
+    "train": [
+      "D1",
+      "D2",
+      "D3"
+    ],
+    "validation": [
+      "D4"
+    ],
+    "test": [
+      "D5",
+      "D6"
+    ]
+  },
+  "metrics": {
+    "auc_pr": 0.7636911039391483,
+    "auc_roc": 0.9654452596210105,
+    "f1": 0.7503889369057909,
+    "precision": 0.7656084656084656,
+    "recall": 0.7357627118644068,
+    "brier": 0.012338003163012473,
+    "threshold": 0.9500380178974897,
+    "tp": 4341,
+    "fp": 1329,
+    "tn": 642262,
+    "fn": 1559,
+    "val_f1": 0.3362511319041199,
+    "n_train": 794859,
+    "n_val": 242722,
+    "n_test": 649491,
+    "train_positive_rate": 0.0050763720357950275,
+    "val_positive_rate": 0.007230494145565709,
+    "test_positive_rate": 0.009084036576334392,
+    "scale_pos_weight": 195.9910780669145
+  },
+  "outputs": {
+    "metrics": "/content/drive/MyDrive/bitcoin_snapshots_project/results/lightgbm_bootstrap_precision_at_k/lightgbm_best_model_metrics.csv",
+    "bootstrap_ci": "/content/drive/MyDrive/bitcoin_snapshots_project/results/lightgbm_bootstrap_precision_at_k/lightgbm_bootstrap_confidence_intervals.csv",
+    "precision_recall_at_k": "/content/drive/MyDrive/bitcoin_snapshots_project/results/lightgbm_bootstrap_precision_at_k/lightgbm_precision_recall_at_k.csv",
+    "top_percent_capture": "/content/drive/MyDrive/bitcoin_snapshots_project/results/lightgbm_bootstrap_precision_at_k/lightgbm_top_percent_capture.csv",
+    "ranked_alerts": "/content/drive/MyDrive/bitcoin_snapshots_project/results/lightgbm_bootstrap_precision_at_k/lightgbm_ranked_test_alerts.csv",
+    "figure_png": "/content/drive/MyDrive/bitcoin_snapshots_project/figures/lightgbm_top_percent_capture.png",
+    "figure_pdf": "/content/drive/MyDrive/bitcoin_snapshots_project/figures/lightgbm_top_percent_capture.pdf"
+  }
+}

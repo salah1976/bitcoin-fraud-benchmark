@@ -1,0 +1,97 @@
+{
+  "dataset": "/content/drive/MyDrive/bitcoin_snapshots_project/data/processed_v21_final/dataset_v21_learning.csv",
+  "best_feature_set": "K_full_without_fee_dynamics",
+  "features": [
+    "input_count",
+    "output_count",
+    "input_addr_count",
+    "coinbase_flag",
+    "has_witness",
+    "script_type_encoded",
+    "input_addr_concentration",
+    "io_count_ratio",
+    "tx_weight",
+    "avg_input_value",
+    "total_input_scaled",
+    "log_output_value",
+    "fee_ratio",
+    "prev_addr_seen_ratio",
+    "prev_addr_seen_count"
+  ],
+  "strict_temporal_protocol": {
+    "train": [
+      "D1",
+      "D2",
+      "D3"
+    ],
+    "validation": [
+      "D4"
+    ],
+    "test": [
+      "D5",
+      "D6"
+    ]
+  },
+  "model": {
+    "type": "CatBoost",
+    "iterations": 700,
+    "depth": 6,
+    "learning_rate": 0.025
+  },
+  "performance": {
+    "auc_pr": 0.7332792621277812,
+    "auc_roc": 0.9790489818923582,
+    "f1": 0.7393462262536369,
+    "precision": 0.7466297960594539,
+    "recall": 0.7322033898305085
+  },
+  "top_features": [
+    {
+      "feature": "script_type_encoded",
+      "mean_abs_shap": 1.2013845116259516
+    },
+    {
+      "feature": "total_input_scaled",
+      "mean_abs_shap": 1.0318196347874429
+    },
+    {
+      "feature": "has_witness",
+      "mean_abs_shap": 0.8792294650671919
+    },
+    {
+      "feature": "log_output_value",
+      "mean_abs_shap": 0.8462193852666591
+    },
+    {
+      "feature": "fee_ratio",
+      "mean_abs_shap": 0.8217611472924532
+    },
+    {
+      "feature": "prev_addr_seen_ratio",
+      "mean_abs_shap": 0.7474150981046633
+    },
+    {
+      "feature": "avg_input_value",
+      "mean_abs_shap": 0.6285307355184077
+    },
+    {
+      "feature": "prev_addr_seen_count",
+      "mean_abs_shap": 0.486199520597329
+    },
+    {
+      "feature": "tx_weight",
+      "mean_abs_shap": 0.29712357180949256
+    },
+    {
+      "feature": "io_count_ratio",
+      "mean_abs_shap": 0.28235476124759473
+    }
+  ],
+  "outputs": {
+    "importance_csv": "/content/drive/MyDrive/bitcoin_snapshots_project/results/shap_analysis/shap_feature_importance.csv",
+    "summary_plot": "/content/drive/MyDrive/bitcoin_snapshots_project/results/shap_analysis/shap_summary_plot.png",
+    "bar_plot": "/content/drive/MyDrive/bitcoin_snapshots_project/results/shap_analysis/shap_bar_plot.png",
+    "dependence_dir": "/content/drive/MyDrive/bitcoin_snapshots_project/results/shap_analysis/dependence_plots",
+    "direction_csv": "/content/drive/MyDrive/bitcoin_snapshots_project/results/shap_analysis/shap_direction_analysis.csv"
+  }
+}

@@ -1,0 +1,178 @@
+{
+  "dataset": "/content/drive/MyDrive/bitcoin_snapshots_project/data/processed_v21_final/dataset_v21_learning.csv",
+  "model": "LightGBM",
+  "feature_set": "15_learning_features_without_heuristics",
+  "features": [
+    "input_count",
+    "output_count",
+    "input_addr_count",
+    "coinbase_flag",
+    "has_witness",
+    "script_type_encoded",
+    "input_addr_concentration",
+    "io_count_ratio",
+    "tx_weight",
+    "avg_input_value",
+    "total_input_scaled",
+    "log_output_value",
+    "fee_ratio",
+    "prev_addr_seen_ratio",
+    "prev_addr_seen_count"
+  ],
+  "experiments": [
+    {
+      "name": "short_horizon_D1_to_D3",
+      "train": [
+        "D1"
+      ],
+      "val": [
+        "D2"
+      ],
+      "test": [
+        "D3"
+      ],
+      "description": "Train on January, validate on February, test on April"
+    },
+    {
+      "name": "medium_horizon_D1D2_to_D4",
+      "train": [
+        "D1",
+        "D2"
+      ],
+      "val": [
+        "D3"
+      ],
+      "test": [
+        "D4"
+      ],
+      "description": "Train on January-February, validate on April, test on May"
+    },
+    {
+      "name": "long_horizon_D1D2D3_to_D5D6",
+      "train": [
+        "D1",
+        "D2",
+        "D3"
+      ],
+      "val": [
+        "D4"
+      ],
+      "test": [
+        "D5",
+        "D6"
+      ],
+      "description": "Train on January-February-April, validate on May, test on July-September"
+    }
+  ],
+  "results_csv": "/content/drive/MyDrive/bitcoin_snapshots_project/results/temporal_horizon_analysis_lightgbm/temporal_horizon_results_lightgbm.csv",
+  "degradation_csv": "/content/drive/MyDrive/bitcoin_snapshots_project/results/temporal_horizon_analysis_lightgbm/temporal_horizon_degradation_lightgbm.csv",
+  "results": [
+    {
+      "experiment": "short_horizon_D1_to_D3",
+      "model": "LightGBM",
+      "train_snapshots": "D1",
+      "val_snapshots": "D2",
+      "test_snapshots": "D3",
+      "n_train": 257784,
+      "n_val": 216088,
+      "n_test": 320987,
+      "train_positive_rate": 0.0037201688235111567,
+      "val_positive_rate": 0.00856132686683203,
+      "test_positive_rate": 0.0038194693243028535,
+      "test_positives": 1226,
+      "auc_pr": 0.07126952606706685,
+      "auc_roc": 0.9079319286963576,
+      "f1": 0.07673267326732673,
+      "precision": 0.15897435897435896,
+      "recall": 0.05057096247960848,
+      "brier": 0.0053182950417744205,
+      "tp": 62,
+      "fp": 328,
+      "tn": 319433,
+      "fn": 1164,
+      "threshold": 0.8547824895483769,
+      "val_f1": 0.13890037205420822,
+      "scale_pos_weight": 267.80500521376433,
+      "description": "Train on January, validate on February, test on April"
+    },
+    {
+      "experiment": "medium_horizon_D1D2_to_D4",
+      "model": "LightGBM",
+      "train_snapshots": "D1+D2",
+      "val_snapshots": "D3",
+      "test_snapshots": "D4",
+      "n_train": 473872,
+      "n_val": 320987,
+      "n_test": 242722,
+      "train_positive_rate": 0.005927761083161697,
+      "val_positive_rate": 0.0038194693243028535,
+      "test_positive_rate": 0.007230494145565709,
+      "test_positives": 1755,
+      "auc_pr": 0.22062455448890184,
+      "auc_roc": 0.9138157183088647,
+      "f1": 0.1883148237566393,
+      "precision": 0.6170886075949367,
+      "recall": 0.1111111111111111,
+      "brier": 0.019982460046110328,
+      "tp": 195,
+      "fp": 121,
+      "tn": 240846,
+      "fn": 1560,
+      "threshold": 0.9897093595521259,
+      "val_f1": 0.7365299060796016,
+      "scale_pos_weight": 167.69775720897115,
+      "description": "Train on January-February, validate on April, test on May"
+    },
+    {
+      "experiment": "long_horizon_D1D2D3_to_D5D6",
+      "model": "LightGBM",
+      "train_snapshots": "D1+D2+D3",
+      "val_snapshots": "D4",
+      "test_snapshots": "D5+D6",
+      "n_train": 794859,
+      "n_val": 242722,
+      "n_test": 649491,
+      "train_positive_rate": 0.0050763720357950275,
+      "val_positive_rate": 0.007230494145565709,
+      "test_positive_rate": 0.009084036576334392,
+      "test_positives": 5900,
+      "auc_pr": 0.7656548117551316,
+      "auc_roc": 0.964346939704232,
+      "f1": 0.7557251908396947,
+      "precision": 0.7739872068230277,
+      "recall": 0.7383050847457627,
+      "brier": 0.011941136517938294,
+      "tp": 4356,
+      "fp": 1272,
+      "tn": 642319,
+      "fn": 1544,
+      "threshold": 0.947219884941718,
+      "val_f1": 0.3263417643425016,
+      "scale_pos_weight": 195.9910780669145,
+      "description": "Train on January-February-April, validate on May, test on July-September"
+    }
+  ],
+  "degradation": [
+    {
+      "experiment": "short_horizon_D1_to_D3",
+      "delta_auc_pr_vs_short": 0.0,
+      "delta_f1_vs_short": 0.0,
+      "relative_auc_pr_vs_short": 1.0,
+      "relative_f1_vs_short": 1.0
+    },
+    {
+      "experiment": "medium_horizon_D1D2_to_D4",
+      "delta_auc_pr_vs_short": 0.14935502842183498,
+      "delta_f1_vs_short": 0.11158215048931257,
+      "relative_auc_pr_vs_short": 3.0956366158698354,
+      "relative_f1_vs_short": 2.454167380570396
+    },
+    {
+      "experiment": "long_horizon_D1D2D3_to_D5D6",
+      "delta_auc_pr_vs_short": 0.6943852856880648,
+      "delta_f1_vs_short": 0.678992517572368,
+      "relative_auc_pr_vs_short": 10.7430883016484,
+      "relative_f1_vs_short": 9.848805712878603
+    }
+  ]
+}

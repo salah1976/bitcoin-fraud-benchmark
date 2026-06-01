@@ -1,0 +1,145 @@
+{
+  "dataset": "/content/drive/MyDrive/bitcoin_snapshots_project/data/processed_v21_final/dataset_v21_learning.csv",
+  "sqlite_db": "/content/drive/MyDrive/bitcoin_snapshots_project/data/extended/all_snapshots_extended_D1_D4_D6_D7_D8_D9_v21.db",
+  "model": "CatBoost best ablation without fee dynamics",
+  "features": [
+    "input_count",
+    "output_count",
+    "input_addr_count",
+    "coinbase_flag",
+    "has_witness",
+    "script_type_encoded",
+    "input_addr_concentration",
+    "io_count_ratio",
+    "tx_weight",
+    "avg_input_value",
+    "total_input_scaled",
+    "log_output_value",
+    "fee_ratio",
+    "prev_addr_seen_ratio",
+    "prev_addr_seen_count"
+  ],
+  "temporal_protocol": {
+    "train": [
+      "D1",
+      "D2",
+      "D3"
+    ],
+    "validation": [
+      "D4"
+    ],
+    "test": [
+      "D5",
+      "D6"
+    ]
+  },
+  "threshold": 0.9507533985077975,
+  "val_f1": 0.30404068945979956,
+  "train_address_counts": {
+    "all_train_addresses": 1700964,
+    "train_fraud_addresses": 123785
+  },
+  "results": [
+    {
+      "region": "overall",
+      "n": 649491,
+      "positives": 5900,
+      "positive_rate": 0.009084036576334392,
+      "auc_pr": 0.7332792621277812,
+      "auc_roc": 0.9790489818923582,
+      "f1": 0.7393462262536369,
+      "precision": 0.7466297960594539,
+      "recall": 0.7322033898305085,
+      "tp": 4320,
+      "fp": 1466,
+      "tn": 642125,
+      "fn": 1580,
+      "threshold": 0.9507533985077975
+    },
+    {
+      "region": "fraud_exposed",
+      "n": 27260,
+      "positives": 5735,
+      "positive_rate": 0.21038151137197358,
+      "auc_pr": 0.854854032154064,
+      "auc_roc": 0.9018377163270949,
+      "f1": 0.8290664100096247,
+      "precision": 0.9252416756176155,
+      "recall": 0.7510026155187446,
+      "tp": 4307,
+      "fp": 348,
+      "tn": 21177,
+      "fn": 1428,
+      "threshold": 0.9507533985077975
+    },
+    {
+      "region": "history_exposed",
+      "n": 109575,
+      "positives": 135,
+      "positive_rate": 0.0012320328542094457,
+      "auc_pr": 0.007363980921461349,
+      "auc_roc": 0.7980734243014944,
+      "f1": 0.028792912513842746,
+      "precision": 0.016927083333333332,
+      "recall": 0.0962962962962963,
+      "tp": 13,
+      "fp": 755,
+      "tn": 108685,
+      "fn": 122,
+      "threshold": 0.9507533985077975
+    },
+    {
+      "region": "isolated",
+      "n": 512656,
+      "positives": 30,
+      "positive_rate": 5.85187728223214e-05,
+      "auc_pr": 0.00028747723846351994,
+      "auc_roc": 0.8406595971852124,
+      "f1": 0.0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "tp": 0,
+      "fp": 363,
+      "tn": 512263,
+      "fn": 30,
+      "threshold": 0.9507533985077975
+    },
+    {
+      "region": "exposed_any",
+      "n": 136835,
+      "positives": 5870,
+      "positive_rate": 0.04289838126210399,
+      "auc_pr": 0.7651855765425183,
+      "auc_roc": 0.9467339876689164,
+      "f1": 0.7650757106171965,
+      "precision": 0.7966070440715471,
+      "recall": 0.7359454855195912,
+      "tp": 4320,
+      "fp": 1103,
+      "tn": 129862,
+      "fn": 1550,
+      "threshold": 0.9507533985077975
+    },
+    {
+      "region": "isolated",
+      "n": 512656,
+      "positives": 30,
+      "positive_rate": 5.85187728223214e-05,
+      "auc_pr": 0.00028747723846351994,
+      "auc_roc": 0.8406595971852124,
+      "f1": 0.0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "tp": 0,
+      "fp": 363,
+      "tn": 512263,
+      "fn": 30,
+      "threshold": 0.9507533985077975
+    }
+  ],
+  "outputs": {
+    "transaction_exposure": "/content/drive/MyDrive/bitcoin_snapshots_project/results/structural_exposure/test_transactions_exposure.csv",
+    "results": "/content/drive/MyDrive/bitcoin_snapshots_project/results/structural_exposure/structural_exposure_results.csv",
+    "summary": "/content/drive/MyDrive/bitcoin_snapshots_project/results/structural_exposure/structural_exposure_summary.csv"
+  }
+}

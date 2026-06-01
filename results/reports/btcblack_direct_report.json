@@ -1,0 +1,57 @@
+{
+  "target_blocks": [
+    914593,
+    914595
+  ],
+  "method": "btcblack_dns_direct",
+  "description": "Direct BTCBlack DNS lookup on ALL addresses from target blocks, without ChainAbuse as intermediary. Independent cross-validation.",
+  "query_count": 3458,
+  "overall_stats": {
+    "target_n": 2478,
+    "target_hit": 4,
+    "target_hit_rate": 0.00161,
+    "control_n": 980,
+    "control_hit": 0,
+    "control_hit_rate": 0.0,
+    "rate_ratio": 161420.5,
+    "odds_ratio": Infinity,
+    "fisher_p": 0.2635160052641797,
+    "chi2_stat": 0.4948,
+    "chi2_p": 0.48180887087631197,
+    "contingency": [
+      [
+        4,
+        2474
+      ],
+      [
+        0,
+        980
+      ]
+    ],
+    "significant_001": false
+  },
+  "per_block_stats": {},
+  "input_output_breakdown": {
+    "target_blocks_input": {
+      "n": 1480,
+      "hit": 2,
+      "rate": 0.00135
+    },
+    "control_d6_input": {
+      "n": 413,
+      "hit": 0,
+      "rate": 0.0
+    },
+    "target_blocks_output": {
+      "n": 998,
+      "hit": 2,
+      "rate": 0.002
+    },
+    "control_d6_output": {
+      "n": 567,
+      "hit": 0,
+      "rate": 0.0
+    }
+  },
+  "interpretation": "NOT CONFIRMED"
+}
