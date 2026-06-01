@@ -1,0 +1,16 @@
+feature,mean_abs_shap
+script_type_encoded,1.2013845116259516
+total_input_scaled,1.0318196347874429
+has_witness,0.8792294650671919
+log_output_value,0.8462193852666591
+fee_ratio,0.8217611472924532
+prev_addr_seen_ratio,0.7474150981046633
+avg_input_value,0.6285307355184077
+prev_addr_seen_count,0.486199520597329
+tx_weight,0.29712357180949256
+io_count_ratio,0.28235476124759473
+output_count,0.06825401154880528
+input_count,0.0671727519229685
+input_addr_concentration,0.05602250661063003
+input_addr_count,0.042300153748002216
+coinbase_flag,0.0
