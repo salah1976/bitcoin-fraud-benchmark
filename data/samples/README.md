@@ -1,7 +1,15 @@
 #Sample Dataset
 
 This directory can contain a small sample of the processed benchmark for demonstration purposes.
-The sample is not intended to reproduce the paper's reported performance. The full results were obtained on the complete benchmark containing 1,687,072 transactions across six chronological snapshots.
+The sample is not intended to reproduce the paper's reported performance. The sample dataset contains 10,000 transactions
+(5,000 fraud and 5,000 non-fraud transactions)
+provided exclusively for demonstration and code-validation purposes.
+
+The complete benchmark contains 1,687,072 transactions distributed across six chronological snapshots and will be released separately upon publication.
+
+
+
+The full results were obtained on the complete benchmark containing 1,68M transactions across six chronological snapshots.
 Suggested sample schema:
 ```text
 tx_hash
