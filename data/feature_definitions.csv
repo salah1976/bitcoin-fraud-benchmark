@@ -7,9 +7,7 @@ has_witness,structural,Binary indicator showing whether SegWit witness data are 
 script_type_encoded,structural,Encoded dominant Bitcoin script type associated with the transaction.
 input_addr_concentration,structural,"Ratio between unique input addresses and input count, clipped to [0,1]."
 io_count_ratio,structural,"Ratio between output count and input count, clipped to control extreme values."
-tx_weight,structural,Approximate transaction weight derived from input and output counts.
 avg_input_value,monetary,"Average input value, computed as total input value divided by input count."
-total_input_scaled,monetary,Log-scaled total input value using log(1 + input value).
 log_output_value,monetary,Log-scaled output value using log(1 + output value).
 fee_ratio,monetary,"Transaction fee divided by input value, clipped to [0,1]."
 prev_addr_seen_ratio,temporal_memory,Fraction of transaction addresses previously observed in earlier snapshots only.
