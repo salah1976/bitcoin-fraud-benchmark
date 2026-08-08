@@ -54,9 +54,7 @@ FEATURES = [
     "script_type_encoded",
     "input_addr_concentration",
     "io_count_ratio",
-    "tx_weight",
     "avg_input_value",
-    "total_input_scaled",
     "log_output_value",
     "fee_ratio",
     "prev_addr_seen_ratio",
@@ -355,7 +353,7 @@ def main() -> None:
         "dataset": args.data_path,
         "model": {
             "type": "LightGBM",
-            "configuration": "final_15_features_with_memory",
+            "configuration": "final_13_features_with_memory",
             "n_estimators": 700,
             "learning_rate": 0.025,
             "num_leaves": 64,
