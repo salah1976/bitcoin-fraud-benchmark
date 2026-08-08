@@ -73,12 +73,11 @@ BASE_STRUCTURAL = [
     "script_type_encoded",
     "input_addr_concentration",
     "io_count_ratio",
-    "tx_weight",
+    
 ]
 
 MONETARY = [
     "avg_input_value",
-    "total_input_scaled",
     "log_output_value",
     "fee_ratio",
 ]
