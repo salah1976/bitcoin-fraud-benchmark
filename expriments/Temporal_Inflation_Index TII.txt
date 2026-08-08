@@ -1,0 +1,621 @@
+
+"""
+Temporal Inflation Index (TII)
+==============================
+
+Computes the Temporal Inflation Index (TII) for LightGBM by comparing
+AUC-PR obtained under:
+
+    1. Strict forward-temporal evaluation
+    2. Random train/test splitting
+
+The same features and LightGBM hyperparameters are used in both settings.
+
+TII definition:
+    TII = AUC-PR(random split) / AUC-PR(temporal split)
+
+A bootstrap confidence interval is computed by independently resampling
+the temporal and random test predictions.
+
+Dataset:
+    Bitcoin transaction benchmark with chronologically ordered snapshots.
+
+Expected snapshot structure:
+    Train: D1, D2, D3
+    Validation: D4
+    Test: D5, D6
+
+This script is designed for reproducible execution outside Google Colab.
+"""
+
+import argparse
+import json
+import os
+
+import numpy as np
+import pandas as pd
+
+from sklearn.metrics import average_precision_score
+from sklearn.model_selection import train_test_split
+from lightgbm import LGBMClassifier
+
+
+# ============================================================
+# CONFIGURATION
+# ============================================================
+
+SEED = 42
+N_BOOTSTRAP = 500
+
+TARGET = "label_final"
+SNAPSHOT_COL = "snapshot_id"
+
+TRAIN_SNAPSHOTS = ["D1", "D2", "D3"]
+VAL_SNAPSHOTS = ["D4"]
+TEST_SNAPSHOTS = ["D5", "D6"]
+
+
+FEATURES = [
+    "input_count",
+    "output_count",
+    "input_addr_count",
+    "coinbase_flag",
+    "has_witness",
+    "script_type_encoded",
+    "input_addr_concentration",
+    "io_count_ratio",
+    "avg_input_value",
+    "log_output_value",
+    "fee_ratio",
+    "prev_addr_seen_ratio",
+    "prev_addr_seen_count",
+]
+
+
+# ============================================================
+# LIGHTGBM CONFIGURATION
+# ============================================================
+
+def make_lightgbm(scale_pos_weight):
+    """
+    Return the LightGBM configuration used in the benchmark.
+    """
+
+    return LGBMClassifier(
+        n_estimators=700,
+        learning_rate=0.025,
+        num_leaves=64,
+        max_depth=-1,
+        subsample=0.90,
+        colsample_bytree=0.90,
+        min_child_samples=50,
+        reg_lambda=2.0,
+        scale_pos_weight=scale_pos_weight,
+        random_state=SEED,
+        n_jobs=-1,
+        verbose=-1,
+    )
+
+
+# ============================================================
+# DATA PREPARATION
+# ============================================================
+
+def load_dataset(path):
+    """
+    Load and clean the processed Bitcoin transaction dataset.
+    """
+
+    print("=" * 70)
+    print("Loading dataset")
+    print("=" * 70)
+
+    df = pd.read_csv(path)
+
+    # Remove duplicated columns if present
+    df = df.loc[:, ~df.columns.duplicated()].copy()
+
+    # Ensure binary target
+    df[TARGET] = df[TARGET].astype(int)
+
+    # Clean numerical features
+    df[FEATURES] = (
+        df[FEATURES]
+        .replace([np.inf, -np.inf], np.nan)
+        .fillna(0)
+    )
+
+    print(f"Dataset shape: {df.shape}")
+    print(f"Features: {len(FEATURES)}")
+
+    return df
+
+
+def temporal_split(df):
+    """
+    Construct the strict forward-temporal split:
+
+        Train = D1-D3
+        Validation = D4
+        Test = D5-D6
+    """
+
+    train_df = df[df[SNAPSHOT_COL].isin(TRAIN_SNAPSHOTS)].copy()
+    val_df = df[df[SNAPSHOT_COL].isin(VAL_SNAPSHOTS)].copy()
+    test_df = df[df[SNAPSHOT_COL].isin(TEST_SNAPSHOTS)].copy()
+
+    return train_df, val_df, test_df
+
+
+# ============================================================
+# SCALE POSITIVE WEIGHT
+# ============================================================
+
+def compute_scale_pos_weight(y):
+    """
+    Compute the class weight used by LightGBM.
+    """
+
+    positives = int(y.sum())
+    negatives = len(y) - positives
+
+    return negatives / max(positives, 1)
+
+
+# ============================================================
+# TEMPORAL MODEL
+# ============================================================
+
+def train_temporal_model(train_df, test_df):
+    """
+    Train LightGBM on D1-D3 and evaluate on D5-D6.
+    """
+
+    X_train = train_df[FEATURES]
+    y_train = train_df[TARGET]
+
+    X_test = test_df[FEATURES]
+    y_test = test_df[TARGET]
+
+    scale_pos_weight = compute_scale_pos_weight(y_train)
+
+    print("\nTemporal split")
+    print("-" * 70)
+    print(f"Train: {len(train_df):,}")
+    print(f"Test : {len(test_df):,}")
+    print(f"Positive rate (train): {y_train.mean():.6f}")
+    print(f"Positive rate (test) : {y_test.mean():.6f}")
+    print(f"scale_pos_weight: {scale_pos_weight:.6f}")
+
+    model = make_lightgbm(scale_pos_weight)
+    model.fit(X_train, y_train)
+
+    scores = model.predict_proba(X_test)[:, 1]
+
+    auc_pr = average_precision_score(y_test, scores)
+
+    print(f"AUC-PR (temporal): {auc_pr:.6f}")
+
+    return y_test.to_numpy(), scores, auc_pr
+
+
+# ============================================================
+# RANDOM MODEL
+# ============================================================
+
+def train_random_model(df, test_fraction):
+    """
+    Train LightGBM using a stratified random split.
+
+    The random split is matched to the size of the temporal
+    test set.
+    """
+
+    print("\nRandom split")
+    print("-" * 70)
+
+    random_train, random_test = train_test_split(
+        df,
+        test_size=test_fraction,
+        random_state=SEED,
+        stratify=df[TARGET],
+    )
+
+    X_train = random_train[FEATURES]
+    y_train = random_train[TARGET]
+
+    X_test = random_test[FEATURES]
+    y_test = random_test[TARGET]
+
+    scale_pos_weight = compute_scale_pos_weight(y_train)
+
+    print(f"Train: {len(random_train):,}")
+    print(f"Test : {len(random_test):,}")
+    print(f"Positive rate (train): {y_train.mean():.6f}")
+    print(f"Positive rate (test) : {y_test.mean():.6f}")
+    print(f"scale_pos_weight: {scale_pos_weight:.6f}")
+
+    model = make_lightgbm(scale_pos_weight)
+    model.fit(X_train, y_train)
+
+    scores = model.predict_proba(X_test)[:, 1]
+
+    auc_pr = average_precision_score(y_test, scores)
+
+    print(f"AUC-PR (random): {auc_pr:.6f}")
+
+    return y_test.to_numpy(), scores, auc_pr
+
+
+# ============================================================
+# BOOTSTRAP TII
+# ============================================================
+
+def bootstrap_tii(
+    y_temporal,
+    score_temporal,
+    y_random,
+    score_random,
+    n_bootstrap=500,
+    seed=42,
+):
+    """
+    Bootstrap the Temporal Inflation Index.
+
+    For each iteration:
+
+        AUC-PR_temporal* = bootstrap AUC-PR on temporal test
+        AUC-PR_random*   = bootstrap AUC-PR on random test
+
+        TII* = AUC-PR_random* / AUC-PR_temporal*
+
+    The 2.5th and 97.5th percentiles define the
+    percentile-based 95% confidence interval.
+    """
+
+    rng = np.random.default_rng(seed)
+
+    temporal_n = len(y_temporal)
+    random_n = len(y_random)
+
+    samples = []
+
+    for _ in range(n_bootstrap):
+
+        temporal_idx = rng.integers(
+            0,
+            temporal_n,
+            size=temporal_n,
+        )
+
+        random_idx = rng.integers(
+            0,
+            random_n,
+            size=random_n,
+        )
+
+        y_t = y_temporal[temporal_idx]
+        s_t = score_temporal[temporal_idx]
+
+        y_r = y_random[random_idx]
+        s_r = score_random[random_idx]
+
+        # AUC-PR requires both classes to be present
+        if len(np.unique(y_t)) < 2:
+            continue
+
+        if len(np.unique(y_r)) < 2:
+            continue
+
+        auc_t = average_precision_score(y_t, s_t)
+        auc_r = average_precision_score(y_r, s_r)
+
+        if auc_t <= 0:
+            continue
+
+        samples.append(auc_r / auc_t)
+
+    samples = np.asarray(samples)
+
+    if len(samples) == 0:
+        raise RuntimeError(
+            "No valid bootstrap iterations were obtained."
+        )
+
+    mean_tii = float(np.mean(samples))
+
+    ci_lower = float(np.quantile(samples, 0.025))
+    ci_upper = float(np.quantile(samples, 0.975))
+
+    return {
+        "bootstrap_mean": mean_tii,
+        "ci_lower": ci_lower,
+        "ci_upper": ci_upper,
+        "n_valid": int(len(samples)),
+        "samples": samples,
+    }
+
+
+# ============================================================
+# MAIN ANALYSIS
+# ============================================================
+
+def compute_tii(dataset_path, output_dir, n_bootstrap=500):
+
+    os.makedirs(output_dir, exist_ok=True)
+
+    # --------------------------------------------------------
+    # Load dataset
+    # --------------------------------------------------------
+
+    df = load_dataset(dataset_path)
+
+    # --------------------------------------------------------
+    # Temporal split
+    # --------------------------------------------------------
+
+    train_df, val_df, temporal_test_df = temporal_split(df)
+
+    print("\nTemporal split")
+    print("-" * 70)
+    print(
+        f"Train snapshots: {TRAIN_SNAPSHOTS} "
+        f"({len(train_df):,} transactions)"
+    )
+    print(
+        f"Validation snapshot: {VAL_SNAPSHOTS} "
+        f"({len(val_df):,} transactions)"
+    )
+    print(
+        f"Test snapshots: {TEST_SNAPSHOTS} "
+        f"({len(temporal_test_df):,} transactions)"
+    )
+
+    # --------------------------------------------------------
+    # Temporal evaluation
+    # --------------------------------------------------------
+
+    y_temporal, score_temporal, aucpr_temporal = train_temporal_model(
+        train_df,
+        temporal_test_df,
+    )
+
+    # --------------------------------------------------------
+    # Random split
+    # --------------------------------------------------------
+
+    test_fraction = len(temporal_test_df) / len(df)
+
+    y_random, score_random, aucpr_random = train_random_model(
+        df,
+        test_fraction,
+    )
+
+    # --------------------------------------------------------
+    # TII point estimate
+    # --------------------------------------------------------
+
+    tii_point = aucpr_random / aucpr_temporal
+
+    print("\n" + "=" * 70)
+    print("TEMPORAL INFLATION INDEX")
+    print("=" * 70)
+
+    print(f"AUC-PR temporal : {aucpr_temporal:.6f}")
+    print(f"AUC-PR random   : {aucpr_random:.6f}")
+    print(f"TII             : {tii_point:.6f}")
+
+    # --------------------------------------------------------
+    # Bootstrap
+    # --------------------------------------------------------
+
+    print("\nComputing bootstrap confidence interval...")
+    print(f"Bootstrap iterations: {n_bootstrap}")
+
+    bootstrap = bootstrap_tii(
+        y_temporal,
+        score_temporal,
+        y_random,
+        score_random,
+        n_bootstrap=n_bootstrap,
+        seed=SEED,
+    )
+
+    print(
+        f"TII bootstrap mean: "
+        f"{bootstrap['bootstrap_mean']:.6f}"
+    )
+
+    print(
+        f"95% CI: "
+        f"[{bootstrap['ci_lower']:.6f}, "
+        f"{bootstrap['ci_upper']:.6f}]"
+    )
+
+    # --------------------------------------------------------
+    # Save bootstrap distribution
+    # --------------------------------------------------------
+
+    bootstrap_df = pd.DataFrame({
+        "tii": bootstrap["samples"]
+    })
+
+    bootstrap_df.to_csv(
+        os.path.join(
+            output_dir,
+            "tii_bootstrap_distribution.csv"
+        ),
+        index=False,
+    )
+
+    # --------------------------------------------------------
+    # Save final report
+    # --------------------------------------------------------
+
+    report = {
+        "metric": "Temporal Inflation Index",
+        "definition": (
+            "TII = AUC-PR(random split) / "
+            "AUC-PR(temporal split)"
+        ),
+        "model": "LightGBM",
+
+        "features": FEATURES,
+
+        "temporal_protocol": {
+            "train_snapshots": TRAIN_SNAPSHOTS,
+            "validation_snapshots": VAL_SNAPSHOTS,
+            "test_snapshots": TEST_SNAPSHOTS,
+            "n_train": int(len(train_df)),
+            "n_validation": int(len(val_df)),
+            "n_test": int(len(temporal_test_df)),
+        },
+
+        "random_protocol": {
+            "stratified": True,
+            "test_size": float(test_fraction),
+            "random_state": SEED,
+        },
+
+        "auc_pr_temporal": float(aucpr_temporal),
+        "auc_pr_random": float(aucpr_random),
+
+        "tii_point_estimate": float(tii_point),
+
+        "bootstrap": {
+            "n_requested": int(n_bootstrap),
+            "n_valid": int(bootstrap["n_valid"]),
+            "mean": float(bootstrap["bootstrap_mean"]),
+            "ci_95_lower": float(bootstrap["ci_lower"]),
+            "ci_95_upper": float(bootstrap["ci_upper"]),
+        },
+
+        "random_state": SEED,
+    }
+
+    report_path = os.path.join(
+        output_dir,
+        "temporal_inflation_index.json"
+    )
+
+    with open(report_path, "w", encoding="utf-8") as f:
+        json.dump(report, f, indent=2)
+
+    # --------------------------------------------------------
+    # Human-readable summary
+    # --------------------------------------------------------
+
+    summary_path = os.path.join(
+        output_dir,
+        "temporal_inflation_index_summary.txt"
+    )
+
+    with open(summary_path, "w", encoding="utf-8") as f:
+
+        f.write("Temporal Inflation Index (TII)\n")
+        f.write("=" * 50 + "\n\n")
+
+        f.write(
+            "Definition: TII = "
+            "AUC-PR(random) / AUC-PR(temporal)\n\n"
+        )
+
+        f.write(
+            f"AUC-PR temporal: {aucpr_temporal:.6f}\n"
+        )
+
+        f.write(
+            f"AUC-PR random:   {aucpr_random:.6f}\n"
+        )
+
+        f.write(
+            f"TII point estimate: {tii_point:.6f}\n"
+        )
+
+        f.write(
+            f"Bootstrap mean: {bootstrap['bootstrap_mean']:.6f}\n"
+        )
+
+        f.write(
+            "95% CI: "
+            f"[{bootstrap['ci_lower']:.6f}, "
+            f"{bootstrap['ci_upper']:.6f}]\n"
+        )
+
+        f.write(
+            f"Valid bootstrap iterations: "
+            f"{bootstrap['n_valid']}\n"
+        )
+
+    print("\n" + "=" * 70)
+    print("RESULTS SAVED")
+    print("=" * 70)
+
+    print(f"Report:")
+    print(f"  {report_path}")
+
+    print(f"Bootstrap distribution:")
+    print(
+        f"  {os.path.join(output_dir, 'tii_bootstrap_distribution.csv')}"
+    )
+
+    print(f"Summary:")
+    print(f"  {summary_path}")
+
+    print("\nAnalysis completed successfully.")
+
+
+# ============================================================
+# COMMAND-LINE INTERFACE
+# ============================================================
+
+def parse_args():
+
+    parser = argparse.ArgumentParser(
+        description=(
+            "Compute the Temporal Inflation Index (TII) "
+            "for LightGBM with bootstrap confidence intervals."
+        )
+    )
+
+    parser.add_argument(
+        "--data",
+        required=True,
+        help="Path to the processed Bitcoin transaction CSV.",
+    )
+
+    parser.add_argument(
+        "--output",
+        default="results/temporal_inflation_index",
+        help=(
+            "Output directory. "
+            "Default: results/temporal_inflation_index"
+        ),
+    )
+
+    parser.add_argument(
+        "--bootstrap",
+        type=int,
+        default=N_BOOTSTRAP,
+        help=(
+            f"Number of bootstrap iterations. "
+            f"Default: {N_BOOTSTRAP}"
+        ),
+    )
+
+    return parser.parse_args()
+
+
+def main():
+
+    args = parse_args()
+
+    compute_tii(
+        dataset_path=args.data,
+        output_dir=args.output,
+        n_bootstrap=args.bootstrap,
+    )
+
+
+if __name__ == "__main__":
+    main()
