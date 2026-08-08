@@ -23,6 +23,10 @@ Output:
 
 ---
 
+### `temporal_inflation_index TII.py`
+
+Computes the Temporal Inflation Index (TII) by comparing LightGBM AUC-PR under strict forward-temporal and stratified random splits, with a 95% bootstrap confidence interval based on 500 resampling iterations.
+
 ### `build_scam_cache.py`
 
 Builds the external-intelligence repository used for fraud labeling.
