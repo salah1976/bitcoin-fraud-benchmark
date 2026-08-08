@@ -2,7 +2,7 @@
 
 This directory contains benchmark metadata, feature definitions, label statistics, and documentation required to reproduce the experimental protocol.
 Files
-`feature_definitions.csv`: definitions of the 15 leakage-controlled learning features used in the final models.
+`feature_definitions.csv`: definitions of the 13 leakage-controlled learning features used in the final models.
 `label_statistics.csv`: transaction and fraud-label counts for each chronological snapshot.
 `snapshot_ranges.json`: chronological snapshot metadata and temporal split definition.
 `sample/`: optional small sample dataset for demonstration purposes.
