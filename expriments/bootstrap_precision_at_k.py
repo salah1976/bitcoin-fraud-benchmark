@@ -11,7 +11,7 @@ Expected input dataset:
       - snapshot_id
       - block_height
       - label_final
-      - the 15 learning features listed in FEATURES
+      - the 13 learning features listed in FEATURES
 
 Example:
     python experiments/bootstrap_precision_at_k.py \
@@ -61,9 +61,7 @@ FEATURES = [
     "script_type_encoded",
     "input_addr_concentration",
     "io_count_ratio",
-    "tx_weight",
     "avg_input_value",
-    "total_input_scaled",
     "log_output_value",
     "fee_ratio",
     "prev_addr_seen_ratio",
