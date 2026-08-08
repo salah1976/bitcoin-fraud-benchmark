@@ -1,0 +1,88 @@
+{
+  "dataset": "/content/drive/MyDrive/bitcoin_snapshots_project/data/processed_v21_final/dataset_v21_learning.csv",
+  "n_features": 13,
+  "features": [
+    "input_count",
+    "output_count",
+    "input_addr_count",
+    "coinbase_flag",
+    "has_witness",
+    "script_type_encoded",
+    "input_addr_concentration",
+    "io_count_ratio",
+    "avg_input_value",
+    "log_output_value",
+    "fee_ratio",
+    "prev_addr_seen_ratio",
+    "prev_addr_seen_count"
+  ],
+  "temporal_split": {
+    "train": [
+      "D1",
+      "D2",
+      "D3"
+    ],
+    "validation": [
+      "D4"
+    ],
+    "test": [
+      "D5",
+      "D6"
+    ]
+  },
+  "random_split": {
+    "train_frac": 0.4711,
+    "val_frac": 0.1439,
+    "test_frac": 0.385,
+    "stratified": true,
+    "seed": 42,
+    "note": "split sizes matched to temporal split proportions"
+  },
+  "hyperparameters_note": "Identical model configurations (n_estimators/iterations=700, learning_rate=0.025, etc.) used for both split types, matching the final article configuration exactly, so that the only variable that changes between conditions is the split protocol.",
+  "results_csv": "/content/drive/MyDrive/bitcoin_snapshots_project/results/v21_random_vs_temporal_corrected/v21_random_vs_temporal_corrected_results.csv",
+  "inflation_csv": "/content/drive/MyDrive/bitcoin_snapshots_project/results/v21_random_vs_temporal_corrected/v21_random_split_inflation_corrected.csv",
+  "summary": [
+    {
+      "model": "XGBoost",
+      "delta_auc_pr_random_minus_temporal": 0.02271641942932856,
+      "delta_auc_roc_random_minus_temporal": 0.014127480439687257,
+      "delta_f1_random_minus_temporal": 0.08042771491274603,
+      "delta_precision_random_minus_temporal": 0.24385450247126983,
+      "delta_recall_random_minus_temporal": -0.12514500941619588,
+      "relative_auc_pr_inflation": 1.0296263963110497,
+      "relative_f1_inflation": 1.1261921690006964,
+      "temporal_auc_pr": 0.7667628283516886,
+      "random_auc_pr": 0.7894792477810172,
+      "temporal_f1": 0.6373431533006001,
+      "random_f1": 0.7177708682133461
+    },
+    {
+      "model": "LightGBM",
+      "delta_auc_pr_random_minus_temporal": 0.059401167111002184,
+      "delta_auc_roc_random_minus_temporal": 0.035082511938844485,
+      "delta_f1_random_minus_temporal": 0.018288914103526954,
+      "delta_precision_random_minus_temporal": 0.09314471407647285,
+      "delta_recall_random_minus_temporal": -0.04503578154425614,
+      "relative_auc_pr_inflation": 1.0772840850758405,
+      "relative_f1_inflation": 1.0245025085058344,
+      "temporal_auc_pr": 0.7686080135736953,
+      "random_auc_pr": 0.8280091806846975,
+      "temporal_f1": 0.7464098665315086,
+      "random_f1": 0.7646987806350356
+    },
+    {
+      "model": "CatBoost",
+      "delta_auc_pr_random_minus_temporal": 0.0408649664416596,
+      "delta_auc_roc_random_minus_temporal": 0.007775374009538316,
+      "delta_f1_random_minus_temporal": -0.0316731226893231,
+      "delta_precision_random_minus_temporal": 2.1843324952919296e-05,
+      "delta_recall_random_minus_temporal": -0.0566478342749529,
+      "relative_auc_pr_inflation": 1.0555815766813446,
+      "relative_f1_inflation": 0.9571221898100394,
+      "temporal_auc_pr": 0.7352250310555791,
+      "random_auc_pr": 0.7760899974972387,
+      "temporal_f1": 0.7386833084292872,
+      "random_f1": 0.7070101857399641
+    }
+  ]
+}

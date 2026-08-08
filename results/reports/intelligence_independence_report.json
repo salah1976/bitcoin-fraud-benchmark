@@ -1,0 +1,124 @@
+{
+  "dataset": "/content/drive/MyDrive/bitcoin_snapshots_project/data/processed_v21_final/dataset_v21_learning.csv",
+  "n_features_audited": 13,
+  "features": [
+    "input_count",
+    "output_count",
+    "input_addr_count",
+    "coinbase_flag",
+    "has_witness",
+    "script_type_encoded",
+    "input_addr_concentration",
+    "io_count_ratio",
+    "avg_input_value",
+    "log_output_value",
+    "fee_ratio",
+    "prev_addr_seen_ratio",
+    "prev_addr_seen_count"
+  ],
+  "naming_level_flags": [],
+  "raw_dataset_intelligence_like_columns": [
+    "label_verified",
+    "label_verified_retro",
+    "label_heuristic",
+    "label_anomaly",
+    "label_final"
+  ],
+  "max_abs_spearman_r": 0.20699869884779518,
+  "copy_like_count_ge_095": 0,
+  "dangerous_count_ge_080": 0,
+  "verdict": "PASS \u2014 no feature approaches copy-like or dangerous correlation with the label",
+  "per_feature": [
+    {
+      "feature": "has_witness",
+      "spearman_r": -0.20699869884779518,
+      "abs_r": 0.20699869884779518,
+      "p_value": 0.0,
+      "status": "LOW"
+    },
+    {
+      "feature": "prev_addr_seen_ratio",
+      "spearman_r": 0.1312398427738477,
+      "abs_r": 0.1312398427738477,
+      "p_value": 0.0,
+      "status": "LOW"
+    },
+    {
+      "feature": "prev_addr_seen_count",
+      "spearman_r": 0.12826817876201968,
+      "abs_r": 0.12826817876201968,
+      "p_value": 0.0,
+      "status": "LOW"
+    },
+    {
+      "feature": "log_output_value",
+      "spearman_r": 0.08139629431628784,
+      "abs_r": 0.08139629431628784,
+      "p_value": 0.0,
+      "status": "LOW"
+    },
+    {
+      "feature": "input_addr_concentration",
+      "spearman_r": -0.07378972815603307,
+      "abs_r": 0.07378972815603307,
+      "p_value": 0.0,
+      "status": "LOW"
+    },
+    {
+      "feature": "input_count",
+      "spearman_r": 0.06616777834087263,
+      "abs_r": 0.06616777834087263,
+      "p_value": 0.0,
+      "status": "LOW"
+    },
+    {
+      "feature": "avg_input_value",
+      "spearman_r": 0.06216749489047516,
+      "abs_r": 0.06216749489047516,
+      "p_value": 0.0,
+      "status": "LOW"
+    },
+    {
+      "feature": "io_count_ratio",
+      "spearman_r": -0.042025213490360674,
+      "abs_r": 0.042025213490360674,
+      "p_value": 0.0,
+      "status": "LOW"
+    },
+    {
+      "feature": "fee_ratio",
+      "spearman_r": -0.028316788900233484,
+      "abs_r": 0.028316788900233484,
+      "p_value": 2.9500820353221946e-296,
+      "status": "LOW"
+    },
+    {
+      "feature": "input_addr_count",
+      "spearman_r": 0.027691070685865005,
+      "abs_r": 0.027691070685865005,
+      "p_value": 2.1287659132309027e-283,
+      "status": "LOW"
+    },
+    {
+      "feature": "script_type_encoded",
+      "spearman_r": -0.015392008168092185,
+      "abs_r": 0.015392008168092185,
+      "p_value": 6.28140923608621e-89,
+      "status": "LOW"
+    },
+    {
+      "feature": "output_count",
+      "spearman_r": -0.008066397928746454,
+      "abs_r": 0.008066397928746454,
+      "p_value": 1.097278956615511e-25,
+      "status": "LOW"
+    },
+    {
+      "feature": "coinbase_flag",
+      "spearman_r": -0.0015755652391505823,
+      "abs_r": 0.0015755652391505823,
+      "p_value": 0.04071118650099698,
+      "status": "LOW"
+    }
+  ]
+}
