@@ -1,4 +1,0 @@
-experiment,delta_auc_pr_vs_short,delta_f1_vs_short,relative_auc_pr_vs_short,relative_f1_vs_short
-short_horizon_D1_to_D3,0.0,0.0,1.0,1.0
-medium_horizon_D1D2_to_D4,0.14935502842183498,0.11158215048931257,3.0956366158698354,2.454167380570396
-long_horizon_D1D2D3_to_D5D6,0.6943852856880648,0.678992517572368,10.7430883016484,9.848805712878603
